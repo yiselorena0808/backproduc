@@ -41,32 +41,39 @@ class UsuarioService {
   }
 
   async login(correo_electronico: string, contrasena: string) {
-    if (!correo_electronico || !contrasena) {
-      return 'Campos obligatorios'
-    }
+  console.log("Correo recibido:", correo_electronico);
+  console.log("Contraseña recibida:", contrasena);
 
-    const user = await Usuario.findBy('correo_electronico', correo_electronico)
-    if (!user) {
-      return 'El usuario no existe'
-    }
-
-    const isValid = await bcrypt.compare(contrasena, user.contrasena)
-    if (!isValid) {
-      return 'Contraseña incorrecta'
-    }
-
-    const token = jwt.sign(
-      {
-        id: user.id,
-        correo_electronico: user.correo_electronico,
-        timestamp: Date.now()
-      },
-      SECRET,
-      { expiresIn: '1h' }
-    )
-
-    return { token, user }
+  if (!correo_electronico || !contrasena) {
+    return { error: 'Campos obligatorios' };
   }
+
+  const user = await Usuario.findBy('correo_electronico', correo_electronico);
+
+  if (!user) {
+    return { error: 'El usuario no existe' };
+  }
+
+  console.log("👤 Usuario encontrado:", user);
+
+  const isValid = await bcrypt.compare(contrasena, user.contrasena);
+
+  if (!isValid) {
+    return { error: 'Contraseña incorrecta' };
+  }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      correo_electronico: user.correo_electronico,
+      timestamp: Date.now()
+    },
+    SECRET,
+    { expiresIn: '1h' }
+  );
+
+  return { mensaje: 'bienvenido', token, user };
+}
 
   async listar() {
     return await Usuario.query()

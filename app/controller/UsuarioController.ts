@@ -16,11 +16,16 @@ class UsuariosController {
     return response.status(201).json({ msj: 'usuario registrado', respuesta })
   }
 
-    async login({request, response}){
-        const {correo_electronico, contrasena} = request.body()
-        const lista=await usuarioService.login(correo_electronico,contrasena)
-        return response.json(lista)
-    }
+   async login({ request, response }) {
+  const { correo_electronico, contrasena } = request.body();
+  const resultado = await usuarioService.login(correo_electronico, contrasena);
+
+  if (resultado.error) {
+    return response.status(400).json(resultado);
+  }
+
+  return response.status(200).json(resultado);
+  }
 
   async listarUsuarios({ response }) {
     try {
