@@ -16,11 +16,24 @@ class UsuariosController {
     return response.status(201).json({ msj: 'usuario registrado', respuesta })
   }
 
+<<<<<<< HEAD
     async login({request, response}: HttpContext){
         const {correo_electronico, contrasena} = request.body()
         const lista=await usuarioService.login(correo_electronico,contrasena)
         return response.json(lista)
     }
+=======
+   async login({ request, response }) {
+  const { correo_electronico, contrasena } = request.body();
+  const resultado = await usuarioService.login(correo_electronico, contrasena);
+
+  if (resultado.error) {
+    return response.status(400).json(resultado);
+  }
+
+  return response.status(200).json(resultado);
+  }
+>>>>>>> 4838369a99c3d4ba29ce248b8965b08baf07374c
 
   async listarUsuarios({ response }: HttpContext) {
     try {
