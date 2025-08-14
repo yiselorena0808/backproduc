@@ -1,11 +1,11 @@
 import UsuarioService from '#services/UsuarioService'
-import { messages } from '@vinejs/vine/defaults'
-import { json } from "stream/consumers"
+import  defaultMessages  from '@vinejs/vine'
+import type { HttpContext} from '@adonisjs/core/http'
 
 const usuarioService = new UsuarioService()
 
 class UsuariosController {
-   async register({ request, response }) {
+   async register({ request, response }: HttpContext) {
     const { nombre, apellido, nombre_usuario, correo_electronico, cargo, contrasena, confirmacion } = request.body()
 
     if (contrasena !== confirmacion) {
@@ -16,40 +16,40 @@ class UsuariosController {
     return response.status(201).json({ msj: 'usuario registrado', respuesta })
   }
 
-    async login({request, response}){
+    async login({request, response}: HttpContext){
         const {correo_electronico, contrasena} = request.body()
         const lista=await usuarioService.login(correo_electronico,contrasena)
         return response.json(lista)
     }
 
-  async listarUsuarios({ response }) {
+  async listarUsuarios({ response }: HttpContext) {
     try {
       const usuarios = await usuarioService.listar()
       return response.json({ msj: 'lista de usuarios', datos: usuarios })
     } catch (error) {
-      return response.json({ error: error.message, messages })
+      return response.json({ error: error.message, messages: defaultMessages  } )
     }
   }
 
-  async listarUsuarioId({ params, response }) {
+  async listarUsuarioId({ params, response }: HttpContext) {
     try {
       const usuario = await usuarioService.listarId(params.id)
       return response.json({ msj: 'usuario encontrado', datos: usuario })
     } catch (error) {
-      return response.json({ error: error.message, messages })
+      return response.json({ error: error.message, messages: defaultMessages  } )
     }
   }
 
-  async actualizarUsuario({ params, request, response }) {
+  async actualizarUsuario({ params, request, response }: HttpContext) {
     try {
       const actualizado = await usuarioService.actualizar(params.id, request.body())
       return response.json({ msj: 'usuario actualizado', datos: actualizado })
     } catch (error) {
-      return response.json({ error: error.message, messages })
+      return response.json({ error: error.message, messages: defaultMessages  } )
     }
   }
 
-  async eliminarUsuario({ params, response }) {
+  async eliminarUsuario({ params, response }: HttpContext) {
     try {
       const resp = await usuarioService.eliminar(params.id)
       return response.json({ msj: resp })
@@ -58,7 +58,7 @@ class UsuariosController {
     }
   }
 
-  async conteoUsuarios({ response }) {
+  async conteoUsuarios({ response }: HttpContext ) {
     try {
       const resultado = await usuarioService.conteo()
       return response.json({ msj: 'conteo realizado', datos: resultado })
